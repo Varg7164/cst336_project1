@@ -8,7 +8,7 @@ session_start(); //You must always use this line to start or resume a session
 //session_destroy();
 print_r($_GET['cart']);
 
- if (!isset($_SESSION['cart'])) {
+if (!isset($_SESSION['cart'])) {
      $_SESSION['cart'] = array();  //initializing session variable
   }
 
