@@ -41,7 +41,8 @@ foreach($updatedCart as $element)
          }
          
          else if (strcmp ($records['misc'],"NULL")==0){
-             $records['equipName'] . " - " . $records['ball'] . "<br/>";
+             
+             echo $records['equipName'] . " - " . $records['ball'] . "<br/>";
              continue;
          }
          
