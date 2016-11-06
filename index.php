@@ -1,5 +1,12 @@
 <?php
 
+session_start();
+
+if (!empty($_GET['clothesType'])){
+        $test = $_GET['clothesType'];
+        echo $test;
+    }
+
 include '../../includes/dbConnection.php';
 $dbConn = getDatabaseConnection('sportsStore');
 function getClothing(){
@@ -9,9 +16,8 @@ function getClothing(){
     $statement->execute();
     $records = $statement->fetchALL();  
     
-    foreach($records as $record) {
-        echo "<option value='" . $record['clothesType'] . "'>" . $record['clothesType'] . "</option>";
-    }
+    return $records;
+            
     
 }
 
@@ -25,44 +31,52 @@ function getSports(){
     $statement=$dbConn->prepare($sql);
     $statement->execute();
     $records = $statement->fetchALL();  
-    foreach($records as $record) {
-        echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
-    }
-    
+
+    return $records;
 }
 
 function search(){
+    
+    
     global $dbConn;
-    $sql = "SELECT * 
-            FROM device 
-            WHERE 1 " ;  //Getting all records 
-            
-            if (!empty($_GET['clothesType'])){
-                //type has been selected
-                $sql = $sql . " AND clothesType = :clothesType";
-                $namedParameters[':clothesType'] = $_GET['clothesType'];
-            }
-            
-            else if (!empty($_GET['sportName'])){
-                //type has been selected
-                $sql = $sql . " AND sportName = :sportName";
-                $namedParameters[':sportName'] = $_GET['sportName'];
-            }
-            
-            $statement= $dbConn->prepare($sql); 
-            $statement->execute($namedParameters); //Always pass the named parameters, if any
-            $records = $statement->fetchALL(PDO::FETCH_ASSOC);  
+    $sql = "SELECT * FROM `clothing` c INNER JOIN `Sports` s 
+            ON c.sportId = s.sportId";  //Getting all records 
+    
+    if (!empty($_GET['clothingType'])){
+        // echo $_GET['clothingType'];
+        $sql = $sql . " WHERE clothesType = \"" . $_GET['clothingType'] . "\"";
+        
+        if (!empty($_GET['sportsType'])){
+            // echo $_GET['sportsType'];
+            $sql = $sql . " AND sportName = \"" . $_GET['sportsType'] . "\"";
+        }
+    }
+    
+    
+    // if (isset($_GET['clothesType'])){
+    //     $test = $_GET['clothesType'];
+    //     echo $test;
+    // }
+    
+    $statement= $dbConn->prepare($sql); 
+    $statement->execute(); //Always pass the named parameters, if any
+    $records = $statement->fetchALL(PDO::FETCH_ASSOC);  
             
             foreach($records as $record) {
               echo"<ul>";
               echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['clothesId'] . ">";
-              echo  $record['clothesName'] . " - ". $record['clothesType'] .  " - ". $record['sportName'] . "</li>";
+              echo  "<a href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . " - ". $record['sportName']. "</li>";
             //   echo "<br/>";
               echo"</ul>";
-        
-      }
-            
-    
+            }
+
+}
+
+if (isset($_GET['submit'])){
+    //  if (!empty($_GET['sportsType'])){
+    //         echo $_GET['sportsType'];
+    //  }
+    search();  
 }
 
 
@@ -78,14 +92,24 @@ function search(){
         
         <form>
             Clothes:
-            <select>
+            <select name ="clothingType">
                 <option value ="default">Select One</option>
-                <?=getClothing()?>
+                <?= $records = getClothing();
+                    foreach($records as $record) {
+                        echo "<option value='" . $record['clothesType'] . "'>" . $record['clothesType'] . "</option>";
+                    }
+                ?>
             </select>
             Sports:
-            <select>
+            <select name = "sportsType">
                 <option value ="default">Select One</option>
-                <?=getSports()?>
+                <?= 
+                    $records = getSports();
+                    foreach($records as $record) {
+                        echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
+                    }
+                
+                ?>
             </select>
             <input type="submit" name ="submit" value="Search"/>
         </form>
