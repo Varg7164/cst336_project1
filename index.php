@@ -2,11 +2,6 @@
 
 session_start();
 
-if (!empty($_GET['clothesType'])){
-        $test = $_GET['clothesType'];
-        echo $test;
-    }
-
 include '../../includes/dbConnection.php';
 $dbConn = getDatabaseConnection('sportsStore');
 function getClothing(){
@@ -57,6 +52,7 @@ function searchClothes(){
                 // echo $_GET['sportsType'];
                 $sql = $sql . " AND sportName = \"" . $_GET['sportsType'] . "\"";
             }
+            
         }
     }
     
@@ -71,8 +67,8 @@ function searchClothes(){
             
             foreach($records as $record) {
               echo"<ul>";
-              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['clothesId'] . ">";
-              echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . " - ". $record['sportName']. "</li>";
+              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['clothesName'] . ">";
+              echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . "</li>";
             //   echo "<br/>";
               echo"</ul>";
             }
@@ -118,8 +114,8 @@ function searchEquipBalls(){
     
     foreach($records as $record) {
               echo"<ul style>";
-              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['equipId'] . ">";
-              echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['equipName'] . "</a>" . " - ". $record['sportName']. "</li>";
+              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['equipName'] . ">";
+              echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['equipName'] . "</a>" . "</li>";
             //   echo "<br/>";
               echo"</ul>";
     }
@@ -166,6 +162,7 @@ function goPlace(){
     </head>
     <body>
         
+        <h1>Sporting Goods</h1>
         
         <table>
             <form>
@@ -219,7 +216,7 @@ function goPlace(){
                     <td>
                         <form action="displayCart.php">
                             <input type="submit" name="checkOut" value="Check Out"/>
-                        </form>
+                        
                     </td>
                     
                 </tr>
@@ -233,7 +230,9 @@ function goPlace(){
                         <?=searchEquipBalls()?>
                     </td>
                 </tr>
+                </form>
         </table>
+        
     </body>
     
     <footer>
