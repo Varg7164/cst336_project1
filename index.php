@@ -72,7 +72,7 @@ function searchClothes(){
             foreach($records as $record) {
               echo"<ul>";
               echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['clothesId'] . ">";
-              echo  "<a href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . " - ". $record['sportName']. "</li>";
+              echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . " - ". $record['sportName']. "</li>";
             //   echo "<br/>";
               echo"</ul>";
             }
@@ -117,7 +117,7 @@ function searchEquipBalls(){
     foreach($records as $record) {
               echo"<ul style>";
               echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['equipId'] . ">";
-              echo  "<a href=\"". $record['link'] . "\"" . ">" . $record['equipName'] . "</a>" . " - ". $record['sportName']. "</li>";
+              echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['equipName'] . "</a>" . " - ". $record['sportName']. "</li>";
             //   echo "<br/>";
               echo"</ul>";
     }
@@ -152,48 +152,112 @@ function goPlace(){
 ?>
 
 
+
+
 <!DOCTYPE html>
 <html>
     <head>
-        <title> </title>
-        <link rel="stylesheet" href="../css/style.css" type="text/css">
+        <title>Project 1: Sports Store</title>
+        
+         <link rel="stylesheet" href="css/project1.css" type="text/css" />
+        
     </head>
     <body>
         
-        <form>
-            Items:
-            <select name ="itemType">
-                <option value ="default">Select One</option>
-                <option value ="balls">balls</option>
-                <option value ="equipment">equipment</option>
-                <?= $records = getClothing();
-                    foreach($records as $record) {
-                        echo "<option value='" . $record['clothesType'] . "'>" . $record['clothesType'] . "</option>";
-                    }
-                ?>
-                
-                
-            </select>
-            Sports:
-            <select name = "sportsType">
-                <option value ="default">Select One</option>
-                <?= 
-                    $records = getSports();
-                    foreach($records as $record) {
-                        echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
-                    }
-                
-                ?>
-            </select>
-            <input type="submit" name ="submit" value="Search"/>
-        </form>
         
-        <form action="displayCart.php">
-             <?=goPlace()?>
-           <br />
-           <input type="submit" value="Continue">
-         </form>
-       
+        <table>
+            <form>
+                <tr>
+                    <th>Clothes</th></br>
+                    <th>Equipment</th>
+                    <th>Check Out</th>
+                </tr>
+                <tr>
+                    <td>
+                        By Type:
+                        <select name="cType">
+                        <option value ="default">Select One</option>
+                            <?= $records = getClothing();
+                                foreach($records as $record) {
+                                 echo "<option value='" . $record['clothesType'] . "'>" . $record['clothesType'] . "</option>";
+                                }
+                            ?>
+                        </select>
+                        </br>
+                        By Brand: 
+                        <input type="text" name="message" size="16" maxlength="16" placeholder="Search by brand"/>
+                        
+                        </br>
+                        
+                        View By:
+                        <input type="radio" name="asc" value="asc" id="ascCell"/> <label for="ascCell"> Ascending </label>
+                        <input type="radio" name="desc" value="desc" id="descCell"/> <label for="descCell"> Descending </label>
 
+                        </br>
+                        
+                        By Sport:
+                        <select name="sType">
+                            <option value ="default">Select One</option>
+                            <?= 
+                                $records = getSports();
+                                foreach($records as $record) {
+                                    echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
+                                }
+                            ?>
+                        </select>
+                        
+                        </br>
+                        
+                        <input type="submit" name="filterC" value="Filter"/>
+                    </td>
+                    
+                    <td>
+                        <input type="radio" name="balls" value="balls" id="ballCell"/> <label for="ballCell"> Balls </label>
+                        <input type="radio" name="equipment" value="equip" id="equipCell"/> <label for="equipCell"> Equipment </label>
+                        
+                        </br>
+                                                
+                        View By:
+                        <input type="radio" name="asc" value="asc" id="ascCell"/> <label for="ascCell"> Ascending </label>
+                        <input type="radio" name="desc" value="desc" id="descCell"/> <label for="descCell"> Descending </label>
+
+                        </br>
+                        
+                        By Sport:
+                        <select name="spType">
+                            <option value ="default">Select One</option>
+                            <?= 
+                                $records = getSports();
+                                foreach($records as $record) {
+                                    echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
+                                }
+                            ?>
+                        </select>
+                        
+                        </br>
+                        
+                        <input type="submit" name="filterEquip" value="Filter"/>
+                    </td>
+                    
+                    </form>
+                    
+                    <td>
+                        <form action="displayCart.php">
+                            <input type="submit" name="checkOut" value="Check Out"/>
+                        </form>
+                    </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td>
+                        <?=searchClothes()?>
+                    </td>
+                    
+                    <td>
+                        <?=searchEquipBalls()?>
+                    </td>
+                </tr>
+        </table>
     </body>
 </html>
