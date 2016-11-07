@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+// session_start();
 
 if (!empty($_GET['clothesType'])){
         $test = $_GET['clothesType'];
@@ -44,12 +44,20 @@ function getSports(){
 
 function searchClothes(){
     
-    
+    $flag = false;
     global $dbConn;
     $sql = "SELECT * FROM `clothing` c INNER JOIN `Sports` s 
             ON c.sportId = s.sportId";  //Getting all records 
     
-    if (!empty($_GET['itemType'])){
+    if (!empty($_GET['itemName'])){
+        $sql = $sql . " AND clothesName LIKE  :clothesName "; //using Named Parameters to prevent SQL Injection
+                   
+        $namedParameters[':clothesName'] = "%" . $_GET['itemName'] . "%";
+        $flag=true;
+        echo "testing3";
+    }
+    
+    else if (!empty($_GET['itemType'])){
         // echo $_GET['itemType'];
         $sql = $sql . " WHERE clothesType = \"" . $_GET['itemType'] . "\"";
         
@@ -60,12 +68,29 @@ function searchClothes(){
     }
     
     
+    
+    
+    
     // if (isset($_GET['clothesType'])){
     //     $test = $_GET['clothesType'];
     //     echo $test;
     // }
     
     $statement= $dbConn->prepare($sql); 
+    if ($flag==true){
+        $statement->execute($namedParameters);
+        $records = $statement->fetchALL(PDO::FETCH_ASSOC);  
+            
+            foreach($records as $record) {
+              echo"<ul>";
+              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['clothesId'] . ">";
+              echo  "<a href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . " - ". $record['sportName']. "</li>";
+            //   echo "<br/>";
+              echo"</ul>";
+            }
+        return;
+    }
+    //This line may have future errors
     $statement->execute(); //Always pass the named parameters, if any
     $records = $statement->fetchALL(PDO::FETCH_ASSOC);  
             
@@ -80,6 +105,7 @@ function searchClothes(){
 }
 
 function searchEquipBalls(){
+    $flag = false;
     global $dbConn;
     $sql = "SELECT * FROM `equipment` e INNER JOIN `Sports` s 
             ON e.sportId = s.sportId";  //Getting all records 
@@ -87,8 +113,15 @@ function searchEquipBalls(){
     if (!empty($_GET['itemType'])){
         
         // echo $_GET['itemType'];
+        if (!empty($_GET['itemName'])){
+        $sql = $sql . " AND equipName LIKE  :equipName "; //using Named Parameters to prevent SQL Injection
+                   
+        $namedParameters[':equipName'] = "%" . $_GET['itemName'] . "%";
+        $flag=true;
+        echo "testing2";
+    }
         
-        if ($_GET['itemType'] == "balls"){
+        else if ($_GET['itemType'] == "balls"){
              if ($_GET['sportsType']=="Baseketball"){
                 $_GET['sportsType']="Basketball"; //Fixing spelling error
             }
@@ -111,6 +144,10 @@ function searchEquipBalls(){
     }
     
     $statement= $dbConn->prepare($sql); 
+    if ($flag==true){
+         $statement->execute($namedParameters); //Always pass the named parameters, if any
+    }
+    //This line may have future errors
     $statement->execute(); //Always pass the named parameters, if any
     $records = $statement->fetchALL(PDO::FETCH_ASSOC);  
     
@@ -128,6 +165,18 @@ function searchEquipBalls(){
 
 function goPlace(){
     if (isset($_GET['submit'])){
+    
+              
+    if (isset($_GET['clothesOrEquip'])){
+        if (strcmp($_GET['clothesOrEquip'],"chooseEquip")==0){
+            searchEquipBalls();
+        }
+        
+        else if (strcmp($_GET['clothesOrEquip'],"chooseClothes")==0){
+            searchClothes();
+        }
+    }    
+        
      if (!empty($_GET['itemType'])){
          
         //  echo $_GET['itemType'];
@@ -185,6 +234,12 @@ function goPlace(){
                 
                 ?>
             </select>
+             
+             <br/>
+             <br/>
+             <input Type="text" name ="itemName" placeholder ="Search" >
+             <input type="radio" name="clothesOrEquip" value="chooseClothes" id ="clickClothes"/><label for ="clickClothes">clothes</label> 
+            <input type="radio"name="clothesOrEquip" value="chooseEquip" id ="clickEquip"/><label for ="clickEquip">equipment</label>
             <input type="submit" name ="submit" value="Search"/>
         </form>
         
