@@ -1,12 +1,4 @@
 <?php
-
-// session_start();
-
-if (!empty($_GET['clothesType'])){
-        $test = $_GET['clothesType'];
-        echo $test;
-    }
-
 include '../../includes/dbConnection.php';
 $dbConn = getDatabaseConnection('sportsStore');
 function getClothing(){
@@ -17,10 +9,7 @@ function getClothing(){
     $records = $statement->fetchALL();  
     
     return $records;
-            
-    
 }
-
 // function getEquipment(){
 //      global $dbConn;
 //     $sql = "SELECT DISTINCT(clothesType) FROM `clothing`";
@@ -31,45 +20,38 @@ function getClothing(){
 //     return $records;
     
 // }
-
 function getSports(){
     global $dbConn;
     $sql = "SELECT * FROM `Sports`";
     $statement=$dbConn->prepare($sql);
     $statement->execute();
     $records = $statement->fetchALL();  
-
     return $records;
 }
-
 function searchClothes(){
     
-    $flag = false;
+    
     global $dbConn;
     $sql = "SELECT * FROM `clothing` c INNER JOIN `Sports` s 
             ON c.sportId = s.sportId";  //Getting all records 
-    
-    if (!empty($_GET['itemName'])){
-        $sql = $sql . " AND clothesName LIKE  :clothesName "; //using Named Parameters to prevent SQL Injection
-                   
-        $namedParameters[':clothesName'] = "%" . $_GET['itemName'] . "%";
-        $flag=true;
-        echo "testing3";
-    }
-    
-    else if (!empty($_GET['itemType'])){
-        // echo $_GET['itemType'];
-        $sql = $sql . " WHERE clothesType = \"" . $_GET['itemType'] . "\"";
-        
-        if (!empty($_GET['sportsType'])){
-            // echo $_GET['sportsType'];
-            $sql = $sql . " AND sportName = \"" . $_GET['sportsType'] . "\"";
+    if(isset($_GET['filter'])){
+        if(!empty($_GET['ascC'])){
+            $sql = "ORDER BY clothesName ASC";
+        }
+        if(!empty($_GET['descC'])){
+            $sql = "ORDER BY clothesName DESC";
+        }
+        if (!empty($_GET['clothesType'])){
+            // echo $_GET['itemType'];
+            $sql = $sql . " WHERE clothesType = \"" . $_GET['clothesType'] . "\"";
+            
+            if (!empty($_GET['sportsType'])){
+                // echo $_GET['sportsType'];
+                $sql = $sql . " AND sportName = \"" . $_GET['sportsType'] . "\"";
+            }
+            
         }
     }
-    
-    
-    
-    
     
     // if (isset($_GET['clothesType'])){
     //     $test = $_GET['clothesType'];
@@ -77,84 +59,57 @@ function searchClothes(){
     // }
     
     $statement= $dbConn->prepare($sql); 
-    if ($flag==true){
-        $statement->execute($namedParameters);
-        $records = $statement->fetchALL(PDO::FETCH_ASSOC);  
-            
-            foreach($records as $record) {
-              echo"<ul>";
-              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['clothesId'] . ">";
-              echo  "<a href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . " - ". $record['sportName']. "</li>";
-            //   echo "<br/>";
-              echo"</ul>";
-            }
-        return;
-    }
-    //This line may have future errors
     $statement->execute(); //Always pass the named parameters, if any
     $records = $statement->fetchALL(PDO::FETCH_ASSOC);  
             
             foreach($records as $record) {
               echo"<ul>";
               echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['clothesId'] . ">";
-              echo  "<a href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . " - ". $record['sportName']. "</li>";
+              echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . "</li>";
             //   echo "<br/>";
               echo"</ul>";
             }
-
 }
-
 function searchEquipBalls(){
-    $flag = false;
     global $dbConn;
     $sql = "SELECT * FROM `equipment` e INNER JOIN `Sports` s 
             ON e.sportId = s.sportId";  //Getting all records 
+    
+    if(isset($_GET['filter'])){        
+        
+        if (!empty($_GET['itemType'])){
+        
+            if ($_GET['itemType'] == "balls"){
+                 if ($_GET['sportsType']=="Baseketball"){
+                    $_GET['sportsType']="Basketball"; //Fixing spelling error
+                }
             
-    if (!empty($_GET['itemType'])){
+                if ($_GET['sportsType']=="Soccer"){
+                    $_GET['sportsType']="Soccer Ball"; //Fixing spelling error
+                }
         
-        // echo $_GET['itemType'];
-        if (!empty($_GET['itemName'])){
-        $sql = $sql . " AND equipName LIKE  :equipName "; //using Named Parameters to prevent SQL Injection
-                   
-        $namedParameters[':equipName'] = "%" . $_GET['itemName'] . "%";
-        $flag=true;
-        echo "testing2";
-    }
-        
-        else if ($_GET['itemType'] == "balls"){
-             if ($_GET['sportsType']=="Baseketball"){
-                $_GET['sportsType']="Basketball"; //Fixing spelling error
+                if (!empty($_GET['sportsType'])){
+                    // echo $_GET['sportsType'];
+                    $sql = $sql . " WHERE ball= \"" . $_GET['sportsType'] . "\"";
+                }
             }
             
-            if ($_GET['sportsType']=="Soccer"){
-                $_GET['sportsType']="Soccer Ball"; //Fixing spelling error
+            else if ($_GET['itemType'] ==  "equipment"){
+                // echo "TEST";
+                $sql = $sql . " WHERE misc != 'NULL' AND sportName = \"" . $_GET['sportsType'] . "\"";
             }
         
-            if (!empty($_GET['sportsType'])){
-                // echo $_GET['sportsType'];
-                $sql = $sql . " WHERE ball= \"" . $_GET['sportsType'] . "\"";
-            }
         }
-        
-        else if ($_GET['itemType'] ==  "equipment"){
-            // echo "TEST";
-            $sql = $sql . " WHERE misc != 'NULL' AND sportName = \"" . $_GET['sportsType'] . "\"";
-        }
-        
     }
     
     $statement= $dbConn->prepare($sql); 
-    if ($flag==true){
-         $statement->execute($namedParameters); //Always pass the named parameters, if any
-    }
-    //This line may have future errors
     $statement->execute(); //Always pass the named parameters, if any
     $records = $statement->fetchALL(PDO::FETCH_ASSOC);  
     
     foreach($records as $record) {
               echo"<ul style>";
               echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['equipId'] . ">";
-              echo  "<a href=\"". $record['link'] . "\"" . ">" . $record['equipName'] . "</a>" . " - ". $record['sportName']. "</li>";
+              echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['equipName'] . "</a>" . "</li>";
             //   echo "<br/>";
               echo"</ul>";
     }
@@ -162,21 +117,8 @@ function searchEquipBalls(){
     
     
 }
-
 function goPlace(){
     if (isset($_GET['submit'])){
-    
-              
-    if (isset($_GET['clothesOrEquip'])){
-        if (strcmp($_GET['clothesOrEquip'],"chooseEquip")==0){
-            searchEquipBalls();
-        }
-        
-        else if (strcmp($_GET['clothesOrEquip'],"chooseClothes")==0){
-            searchClothes();
-        }
-    }    
-        
      if (!empty($_GET['itemType'])){
          
         //  echo $_GET['itemType'];
@@ -194,61 +136,108 @@ function goPlace(){
         echo "null";
     }
 }
-
-
-
-
 ?>
+
+
 
 
 <!DOCTYPE html>
 <html>
     <head>
-        <title> </title>
-        <link rel="stylesheet" href="../css/style.css" type="text/css">
+        <title>Project 1: Sports Store</title>
+        
+         <link rel="stylesheet" href="css/project1.css" type="text/css" />
+        
     </head>
-    <body>
+    <body class="store">
         
-        <form>
-            Items:
-            <select name ="itemType">
-                <option value ="default">Select One</option>
-                <option value ="balls">balls</option>
-                <option value ="equipment">equipment</option>
-                <?= $records = getClothing();
-                    foreach($records as $record) {
-                        echo "<option value='" . $record['clothesType'] . "'>" . $record['clothesType'] . "</option>";
-                    }
-                ?>
-                
-                
-            </select>
-            Sports:
-            <select name = "sportsType">
-                <option value ="default">Select One</option>
-                <?= 
-                    $records = getSports();
-                    foreach($records as $record) {
-                        echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
-                    }
-                
-                ?>
-            </select>
-             
-             <br/>
-             <br/>
-             <input Type="text" name ="itemName" placeholder ="Search" >
-             <input type="radio" name="clothesOrEquip" value="chooseClothes" id ="clickClothes"/><label for ="clickClothes">clothes</label> 
-            <input type="radio"name="clothesOrEquip" value="chooseEquip" id ="clickEquip"/><label for ="clickEquip">equipment</label>
-            <input type="submit" name ="submit" value="Search"/>
-        </form>
+        <h1>Sporting Goods</h1>
         
-        <form action="displayCart.php">
-             <?=goPlace()?>
-           <br />
-           <input type="submit" value="Continue">
-         </form>
-       
+        <table>
+            <form>
+                <tr>
+                    <th>Clothes</th></br>
+                    <th>Equipment</th>
+                    <th>Sports</th>
+                    <th>Search</th>
+                    <th>Check Out</th>
+                </tr>
+                <tr>
+                    <td>
+                        Article Type:
+                        <select name ="clothesType">
+                             <option value ="default">Select One</option>
+                             <?= $records = getClothing();
+                                 foreach($records as $record) {
+                                 echo "<option value='" . $record['clothesType'] . "'>" . $record['clothesType'] . "</option>";
+                                 }
+                             ?>
+                        </select>
+                        </br>
+                        <input type="radio" name="orderC" value="ascC" checked> Ascending
+                        <input type="radio" name="orderC" value="descC"> Descending
 
+                    </td>
+                    
+                    <td>
+                        Equipment:
+                        <select name ="itemType">
+                             <option value ="default">Select One</option>
+                             <option value ="balls">balls</option>
+                             <option value ="equipment">equipment</option>
+                        </select>
+                        </br>
+                        <input type="radio" name="orderE" value="ascE" checked> Ascending
+                        <input type="radio" name="orderE" value="descE"> Descending
+                    </td>
+                    
+                    <td>
+                        Sport:
+                        <select name = "sportsType">
+                            <option value ="default">Select One</option>
+                            <?= 
+                                 $records = getSports();
+                                 foreach($records as $record) {
+                                     echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
+                                     }
+                            ?>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="submit" name="filter" value="Filter"/>
+                    </td>
+                    
+                    </form>
+                    
+                    <td>
+                        <form action="displayCart.php">
+                            <input type="submit" name="checkOut" value="Check Out"/>
+                        
+                    </td>
+                    
+                </tr>
+                
+                <tr>
+                    <td>
+                        <?=searchClothes()?>
+                    </td>
+                    
+                    <td>
+                        <?=searchEquipBalls()?>
+                    </td>
+                </tr>
+                </form>
+        </table>
+        
     </body>
+    
+    <footer>
+        <hr> &copy; Michael Vargas, Scott Ligon, Tristan Anderson, 2016. Disclaimer: The information on this page might not be acurate. It's used for academic puposes.
+        <br />
+        <img src="../../img/csumb-logo.png" alt="CSUMB Logo"/>
+        <br />
+        <a  target='_blank' href="https://trello.com/b/Xiwk4wR5/cst-336-project-1">Trello Page</a>
+        </br>
+        <a target='_blank' href="https://drive.google.com/a/csumb.edu/file/d/0Byh8lROKlWbnbXJHSXVTT2l0R28/view?usp=sharing">Group Google Doc</a>
+    </footer>
 </html>
