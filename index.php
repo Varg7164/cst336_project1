@@ -48,17 +48,17 @@ function searchClothes(){
     global $dbConn;
     $sql = "SELECT * FROM `clothing` c INNER JOIN `Sports` s 
             ON c.sportId = s.sportId";  //Getting all records 
-    
-    if (!empty($_GET['itemType'])){
-        // echo $_GET['itemType'];
-        $sql = $sql . " WHERE clothesType = \"" . $_GET['itemType'] . "\"";
-        
-        if (!empty($_GET['sportsType'])){
-            // echo $_GET['sportsType'];
-            $sql = $sql . " AND sportName = \"" . $_GET['sportsType'] . "\"";
+    if(isset($_GET['filter'])){
+        if (!empty($_GET['clothesType'])){
+            // echo $_GET['itemType'];
+            $sql = $sql . " WHERE clothesType = \"" . $_GET['clothesType'] . "\"";
+            
+            if (!empty($_GET['sportsType'])){
+                // echo $_GET['sportsType'];
+                $sql = $sql . " AND sportName = \"" . $_GET['sportsType'] . "\"";
+            }
         }
     }
-    
     
     // if (isset($_GET['clothesType'])){
     //     $test = $_GET['clothesType'];
@@ -83,31 +83,33 @@ function searchEquipBalls(){
     global $dbConn;
     $sql = "SELECT * FROM `equipment` e INNER JOIN `Sports` s 
             ON e.sportId = s.sportId";  //Getting all records 
+    
+    if(isset($_GET['filter'])){        
+        if (!empty($_GET['itemType'])){
             
-    if (!empty($_GET['itemType'])){
+            // echo $_GET['itemType'];
         
-        // echo $_GET['itemType'];
+            if ($_GET['itemType'] == "balls"){
+                 if ($_GET['sportsType']=="Baseketball"){
+                    $_GET['sportsType']="Basketball"; //Fixing spelling error
+                }
+            
+                if ($_GET['sportsType']=="Soccer"){
+                    $_GET['sportsType']="Soccer Ball"; //Fixing spelling error
+                }
         
-        if ($_GET['itemType'] == "balls"){
-             if ($_GET['sportsType']=="Baseketball"){
-                $_GET['sportsType']="Basketball"; //Fixing spelling error
+                if (!empty($_GET['sportsType'])){
+                    // echo $_GET['sportsType'];
+                    $sql = $sql . " WHERE ball= \"" . $_GET['sportsType'] . "\"";
+                }
             }
             
-            if ($_GET['sportsType']=="Soccer"){
-                $_GET['sportsType']="Soccer Ball"; //Fixing spelling error
+            else if ($_GET['itemType'] ==  "equipment"){
+                // echo "TEST";
+                $sql = $sql . " WHERE misc != 'NULL' AND sportName = \"" . $_GET['sportsType'] . "\"";
             }
         
-            if (!empty($_GET['sportsType'])){
-                // echo $_GET['sportsType'];
-                $sql = $sql . " WHERE ball= \"" . $_GET['sportsType'] . "\"";
-            }
         }
-        
-        else if ($_GET['itemType'] ==  "equipment"){
-            // echo "TEST";
-            $sql = $sql . " WHERE misc != 'NULL' AND sportName = \"" . $_GET['sportsType'] . "\"";
-        }
-        
     }
     
     $statement= $dbConn->prepare($sql); 
@@ -170,73 +172,46 @@ function goPlace(){
                 <tr>
                     <th>Clothes</th></br>
                     <th>Equipment</th>
+                    <th>Sports</th>
+                    <th>Search</th>
                     <th>Check Out</th>
                 </tr>
                 <tr>
                     <td>
-                        By Type:
-                        <select name="cType">
-                        <option value ="default">Select One</option>
-                            <?= $records = getClothing();
-                                foreach($records as $record) {
+                        Article Type:
+                        <select name ="clothesType">
+                             <option value ="default">Select One</option>
+                             <?= $records = getClothing();
+                                 foreach($records as $record) {
                                  echo "<option value='" . $record['clothesType'] . "'>" . $record['clothesType'] . "</option>";
-                                }
-                            ?>
+                                 }
+                             ?>
                         </select>
-                        </br>
-                        By Brand: 
-                        <input type="text" name="message" size="16" maxlength="16" placeholder="Search by brand"/>
-                        
-                        </br>
-                        
-                        View By:
-                        <input type="radio" name="asc" value="asc" id="ascCell"/> <label for="ascCell"> Ascending </label>
-                        <input type="radio" name="desc" value="desc" id="descCell"/> <label for="descCell"> Descending </label>
-
-                        </br>
-                        
-                        By Sport:
-                        <select name="sType">
-                            <option value ="default">Select One</option>
-                            <?= 
-                                $records = getSports();
-                                foreach($records as $record) {
-                                    echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
-                                }
-                            ?>
-                        </select>
-                        
-                        </br>
-                        
-                        <input type="submit" name="filterC" value="Filter"/>
                     </td>
                     
                     <td>
-                        <input type="radio" name="balls" value="balls" id="ballCell"/> <label for="ballCell"> Balls </label>
-                        <input type="radio" name="equipment" value="equip" id="equipCell"/> <label for="equipCell"> Equipment </label>
-                        
-                        </br>
-                                                
-                        View By:
-                        <input type="radio" name="asc" value="asc" id="ascCell"/> <label for="ascCell"> Ascending </label>
-                        <input type="radio" name="desc" value="desc" id="descCell"/> <label for="descCell"> Descending </label>
-
-                        </br>
-                        
-                        By Sport:
-                        <select name="spType">
+                        Equipment:
+                        <select name ="itemType">
+                             <option value ="default">Select One</option>
+                             <option value ="balls">balls</option>
+                             <option value ="equipment">equipment</option>
+                        </select>
+                    </td>
+                    
+                    <td>
+                        Sport:
+                        <select name = "sportsType">
                             <option value ="default">Select One</option>
                             <?= 
-                                $records = getSports();
-                                foreach($records as $record) {
-                                    echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
-                                }
+                                 $records = getSports();
+                                 foreach($records as $record) {
+                                     echo "<option value='" . $record['sportName'] . "'>" . $record['sportName'] . "</option>";
+                                     }
                             ?>
                         </select>
-                        
-                        </br>
-                        
-                        <input type="submit" name="filterEquip" value="Filter"/>
+                    </td>
+                    <td>
+                        <input type="submit" name="filter" value="Filter"/>
                     </td>
                     
                     </form>
@@ -260,4 +235,10 @@ function goPlace(){
                 </tr>
         </table>
     </body>
+    
+    <footer>
+        <a  target='_blank' href="https://trello.com/b/Xiwk4wR5/cst-336-project-1">Trello Page</a>
+        </br>
+        <a target='_blank' href="https://drive.google.com/a/csumb.edu/file/d/0Byh8lROKlWbnbXJHSXVTT2l0R28/view?usp=sharing">Group Google Doc</a>
+    </footer>
 </html>
