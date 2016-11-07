@@ -1,4 +1,8 @@
 <?php
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/origin/master
 include '../../includes/dbConnection.php';
 $dbConn = getDatabaseConnection('sportsStore');
 function getClothing(){
