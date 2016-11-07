@@ -12,8 +12,6 @@ function getClothing(){
     $records = $statement->fetchALL();  
     
     return $records;
-            
-    
 }
 
 // function getEquipment(){
@@ -67,7 +65,7 @@ function searchClothes(){
             
             foreach($records as $record) {
               echo"<ul>";
-              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['clothesName'] . ">";
+              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['clothesId'] . ">";
               echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['clothesName'] . "</a>" . "</li>";
             //   echo "<br/>";
               echo"</ul>";
@@ -114,7 +112,7 @@ function searchEquipBalls(){
     
     foreach($records as $record) {
               echo"<ul style>";
-              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['equipName'] . ">";
+              echo "<li> <input type='checkbox' name='cart[]'    value =" . $record['equipId'] . ">";
               echo  "<a target='_blank' href=\"". $record['link'] . "\"" . ">" . $record['equipName'] . "</a>" . "</li>";
             //   echo "<br/>";
               echo"</ul>";
@@ -160,7 +158,7 @@ function goPlace(){
          <link rel="stylesheet" href="css/project1.css" type="text/css" />
         
     </head>
-    <body>
+    <body class="store">
         
         <h1>Sporting Goods</h1>
         

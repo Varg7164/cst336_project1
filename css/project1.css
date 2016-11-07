@@ -9,5 +9,14 @@
      
        tr, td, th {
            border: 1px solid black;
-           
+           background-color:#336600;
+           color:white;
+       }
+       
+       .display{
+           background-image:url("../img/shoppingCart.jpg");
+       }
+       
+       .store{
+           background-image:url("../img/balls.jpg");
        }
