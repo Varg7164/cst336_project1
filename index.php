@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 include '../../includes/dbConnection.php';
 $dbConn = getDatabaseConnection('sportsStore');
 function getClothing(){
@@ -42,6 +40,12 @@ function searchClothes(){
     $sql = "SELECT * FROM `clothing` c INNER JOIN `Sports` s 
             ON c.sportId = s.sportId";  //Getting all records 
     if(isset($_GET['filter'])){
+        if(!empty($_GET['ascC'])){
+            $sql = "ORDER BY clothesName ASC";
+        }
+        if(!empty($_GET['descC'])){
+            $sql = "ORDER BY clothesName DESC";
+        }
         if (!empty($_GET['clothesType'])){
             // echo $_GET['itemType'];
             $sql = $sql . " WHERE clothesType = \"" . $_GET['clothesType'] . "\"";
@@ -79,9 +83,8 @@ function searchEquipBalls(){
             ON e.sportId = s.sportId";  //Getting all records 
     
     if(isset($_GET['filter'])){        
+        
         if (!empty($_GET['itemType'])){
-            
-            // echo $_GET['itemType'];
         
             if ($_GET['itemType'] == "balls"){
                  if ($_GET['sportsType']=="Baseketball"){
@@ -182,6 +185,10 @@ function goPlace(){
                                  }
                              ?>
                         </select>
+                        </br>
+                        <input type="radio" name="orderC" value="ascC" checked> Ascending
+                        <input type="radio" name="orderC" value="descC"> Descending
+
                     </td>
                     
                     <td>
@@ -191,6 +198,9 @@ function goPlace(){
                              <option value ="balls">balls</option>
                              <option value ="equipment">equipment</option>
                         </select>
+                        </br>
+                        <input type="radio" name="orderE" value="ascE" checked> Ascending
+                        <input type="radio" name="orderE" value="descE"> Descending
                     </td>
                     
                     <td>
@@ -234,6 +244,10 @@ function goPlace(){
     </body>
     
     <footer>
+        <hr> &copy; Michael Vargas, Scott Ligon, Tristan Anderson, 2016. Disclaimer: The information on this page might not be acurate. It's used for academic puposes.
+        <br />
+        <img src="../../img/csumb-logo.png" alt="CSUMB Logo"/>
+        <br />
         <a  target='_blank' href="https://trello.com/b/Xiwk4wR5/cst-336-project-1">Trello Page</a>
         </br>
         <a target='_blank' href="https://drive.google.com/a/csumb.edu/file/d/0Byh8lROKlWbnbXJHSXVTT2l0R28/view?usp=sharing">Group Google Doc</a>

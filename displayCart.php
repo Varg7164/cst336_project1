@@ -3,15 +3,14 @@
 include '../../includes/dbConnection.php';
 $dbConn = getDatabaseConnection('sportsStore');
 
+session_start();
 
-session_start(); //You must always use this line to start or resume a session
-//session_destroy();
-
-if (!isset($_SESSION['cart'])) {
-     $_SESSION['cart'] = array();  //initializing session variable
-  }
+if(!isset($_SESSION['cart'])){
+    $_SESSION['cart'] = array(); //initializing the session variable
+}
 
 $cart = $_GET['cart'];
+
 
 function displayCart(){
     global $dbConn;
@@ -48,12 +47,6 @@ function displayCart(){
                      continue;
                  }
             }
-    
-    // echo $element . "<br/>";
-    // if (!in_array($element, $SESSION['cart'])) { //avoid duplicate device Ids
-    //   $_SESSION['cart'][] = $element;
-    // }
-    //    echo $element . "<br/>";
         }
     }
     else
@@ -79,4 +72,13 @@ function displayCart(){
             <input type="submit" name="return" value="Return to Main Page"/>
         </form>
     </body>
+    <footer>
+        <hr> &copy; Michael Vargas, Scott Ligon, Tristan Anderson, 2016. Disclaimer: The information on this page might not be acurate. It's used for academic puposes.
+        <br />
+        <img src="../../img/csumb-logo.png" alt="CSUMB Logo"/>
+        <br />
+        <a  target='_blank' href="https://trello.com/b/Xiwk4wR5/cst-336-project-1">Trello Page</a>
+        </br>
+        <a target='_blank' href="https://drive.google.com/a/csumb.edu/file/d/0Byh8lROKlWbnbXJHSXVTT2l0R28/view?usp=sharing">Group Google Doc</a>
+    </footer>
 </html>
