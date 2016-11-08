@@ -15,8 +15,12 @@
        
        .display{
            background-image:url("../img/shoppingCart.jpg");
-           color:black;
            overflow:hidden;
+           background-repeat: no-repeat;
+           background-attachment: fixed;
+           background-position: center; 
+           color:#0000000;
+           text-align:center;
        }
        
        .store{
