@@ -74,13 +74,17 @@ function displayCart(){
         <link rel="stylesheet" href="css/project1.css" type="text/css" />
     </head>
     <body class="display">
-        <h1>Your Shopping Cart</h1>
-        <?=displayCart()?>
-        
-        </br>
+        <main class="whiteBG">
+            <h1>Your Shopping Cart</h1>
+                <?=displayCart()?>
+                </br>
         <form action="index.php">
             <input type="submit" name="return" value="Return to Main Page"/>
         </form>
+        </main>
+        
+        
+        
     </body>
     <footer>
         <hr> &copy; Michael Vargas, Scott Ligon, Tristan Anderson, 2016. Disclaimer: The information on this page might not be acurate. It's used for academic puposes.
