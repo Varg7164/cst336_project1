@@ -6,18 +6,28 @@ $dbConn = getDatabaseConnection('sportsStore');
 session_start();
 
 if(!isset($_SESSION['cart'])){
-    $_SESSION['cart'] = array(); //initializing the session variable
+    $_SESSION['cart'] = array();//initializing the session variable
 }
 
 $cart = $_GET['cart'];
 
+foreach ($cart as $items){
+    $_SESSION['cart'][] = $items;
+}
+
 
 function displayCart(){
-    global $dbConn;
-    global $cart;
+    // global $cart;
+    // $_SESSION['cart'][] = $cart;
     
-    if(isset($cart)){
-        foreach($cart as $element)
+    array_unique($_SESSION['cart']);
+   
+    global $dbConn;
+    
+    // print_r($_SESSION['cart']);
+    
+    if(isset($_SESSION['cart'])){
+        foreach($_SESSION['cart'] as $element)
         {   
             if ($element[0] == 'C'){
                  $sql = "SELECT * FROM `clothing` WHERE clothesId =\"". $element . "\"";
